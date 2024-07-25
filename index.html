@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curve Score</title>
+    <style>
+        /* Reset some default styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #222;
+            color: #fff;
+            padding: 2em;
+            text-align: center;
+            margin-bottom: 2em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        main {
+            padding: 2em;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        section {
+            margin-bottom: 2em;
+        }
+
+        h1,
+        h2 {
+            font-weight: 700;
+            margin-bottom: 0.5em;
+        }
+
+        h2 {
+            color: #0077cc;
+            border-bottom: 2px solid #0077cc;
+            padding-bottom: 0.3em;
+            margin-top: 1em;
+        }
+
+        .small-img {
+            max-width: 70%;
+            height: auto;
+            margin: 20px 0;
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        a {
+            color: #0077cc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            padding: 1em;
+            margin-top: 2em;
+        }
+
+        /* Blockquote styling */
+        blockquote {
+            border-left: 5px solid #0077cc;
+            background-color: #e7f3ff;
+            margin: 20px 0;
+            padding: 10px 20px;
+            font-style: italic;
+            position: relative;
+        }
+
+        blockquote:before {
+            content: "“";
+            font-size: 3em;
+            color: #0077cc;
+            position: absolute;
+            left: 10px;
+            top: -10px;
+        }
+
+        blockquote p {
+            margin: 0;
+        }
+
+        .image-row {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .curve-image {
+            border: 2px solid #0077cc;
+            border-radius: 8px;
+            margin: 0 10px;
+            max-width: 50%;
+            height: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2em 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #0077cc;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+  
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Curve Score</h1>
+        <p>By Jack Wright, <a href="mailto:jwrightzz1234@gmail.com">jwrightzz1234@gmail.com</a></p>
+    </header>
+    <main>
+        <section>
+            <h2>Synopsis</h2>
+            <p>I created a ‘curve score’ metric that is able to describe a deck’s mana curve in terms of mana efficiency
+                in a single metric. High values are related to early game mana efficiency and low values are related to
+                late game mana efficiency. Here are 3 examples:</p>
+                <section>
+            
+                    <div class="image-row">
+                        <div class="image-row">
+                            <img src="plots/curve_bar_low.png" alt="Curve Bar Low" class="curve-image">
+                            <img src="plots/curve_bar_mid.png" alt="Curve Bar Mid" class="curve-image">
+                            <img src="plots/curve_bar_hig.png" alt="Curve Bar High" class="curve-image">
+                        </div>
+                    </section>
+        </section>
+        <section>
+            <h2>A. Brief Explanation of the Importance of Mana Curve in MTG Deck Building</h2>
+            <h3>Purpose of a Mana Curve</h3>
+            <p>I consider the mana curve of a deck pivotal in optimizing mana efficiency during a game of Magic: The
+                Gathering. A well-designed curve typically resembles a somewhat normal distribution of cards with
+                varying costs, leaning slightly towards lower costs. It ensures that the number of cards at each mana
+                cost aligns with the likelihood of drawing that cost during gameplay.</p>
+            <p>For instance, deck builders often include more two-mana cost cards than three-mana ones, and more
+                three-mana cards than four. This decision is grounded in the desire to consistently access cards with
+                lower costs earlier in the game, increasing the probability of drawing a two-mana cost card on turn
+                two.</p>
+        </section>
+        <section>
+            <h3>Mana Efficiency</h3>
+            <p>Exploring a deck's mana curve and its influence on mana efficiency is a key interest. While the impact of
+                the curve on a deck's ability to be mana efficient is apparent, quantifying the 'curviness' presents a
+                challenge. Developing a metric to precisely identify the curve of a deck opens the door to isolating its
+                effects on mana efficiency and delving into various other intriguing aspects of the game.</p>
+            <p>Mana efficiency of a particular curve is a product of game length. If a game is short, a curve with
+                cheaper cards is more efficient due to the limited lands available. Conversely, in a longer game, a
+                curve with more expensive cards becomes more efficient. Because of this extra dimension, we expect to
+                see different curves be more or less efficient at different points in the game.</p>
+        </section>
+        <section>
+            <h2>II. Mana Curve as a Vector</h2>
+            <p>The mana curve of a deck can be conceptualized as a vector in a 5-dimensional space, with each dimension
+                corresponding to different mana slots (one mana cards, two mana cards, three mana cards, and so on).
+                This representation allows the entire mana curve to be uniquely defined as a point within this
+                5-dimensional space.</p>
+            <p>By taking 2-dimensional slices of this 5-dimensional space, a visual representation of the mana curve can
+                be created. This process involves projecting statistical measures, such as win rate or mana efficiency,
+                onto the mana curve space. These slices provide a comprehensive visualization, allowing for a more
+                intuitive understanding of the deck's performance in relation to specific mana costs and aiding in the
+                identification of strategic trends within the gameplay.</p>
+            </section>
+            <section>
+                <img src = "plots/2_d_curve_example.png" alt = "2d curve" >
+            </section>
+            
+            <section>
+            <p>Above is a 2-D slice of this space. The color represents the win rate of decks when looking at how many
+                two and three mana cards they have. This can be expanded to visualize the interaction of neighboring
+                curve slots and their effect on some statistic (in this case, mana efficiency on turn 8).</p>
+            </section>
+        <section>
+            <h2>III. Curve-Vector Representation and Mana Efficiency</h2>
+            <p>Now that we have a mathematical and visual representation of a curve’s mana efficiency, we can examine
+                efficiency at different points in the game.</p>
+                <img src = "plots/example_curve_plot.png" alt = 'example curve'  width = "700">
+            <ul>
+                <li>Note how the most efficient curves on turn three contain almost all one, two, and three mana
+                    cards.</li>
+                <img src = "plots/example_curve_plot_2.png" alt = "example curve 2" width = "700">
+                <li>Note how the most efficient curves contain almost no cheap cards and mostly expensive cards.</li>
+                <li>Early and late game curves are almost exact mirror images of each other. Hot zones early become cold
+                    zones late.</li>
+            </ul>
+        </section>
+        <section>
+            <h2>IV. Representing Curve as a Single Metric</h2>
+            <p>Since the early and late game curves are almost perfect mirrors of each other, I can represent a mana
+                curve as a mean value of its efficiency scores in a specific heatmap. I have selected turn 4 as my
+                heatmap of interest because it is the first stable graph and maps most closely onto the winningest
+                curves up until turn 11. Here are some examples of curves and their ‘curve scores’:</p>
+        </section>
+        <section>
+            
+            <div class="image-row">
+                <div class="image-row">
+                    <img src="plots/curve_bar_low.png" alt="Curve Bar Low" class="curve-image">
+                    <img src="plots/curve_bar_mid.png" alt="Curve Bar Mid" class="curve-image">
+                    <img src="plots/curve_bar_hig.png" alt="Curve Bar High" class="curve-image">
+                </div>
+            </section>
+        <section>
+            <h2>Categorizing Decks by Mana Curve</h2>
+            <p>Categorizing decks by their mana curve not only provides a framework for strategic analysis but also
+                unlocks several compelling avenues for exploring different facets of Magic:</p>
+            <ul>
+                <li><strong>Optimal Land Count:</strong> By understanding the mana curve of a deck, it becomes easier to
+                    identify the correct number of lands needed for optimal performance. Decks with lower curves might
+                    thrive with fewer lands to ensure a smoother draw, while those with higher curves may require a more
+                    robust mana base.</li>
+                <li><strong>Mana Base Impact on Efficiency:</strong> Exploring how different mana bases affect a deck's
+                    expected mana efficiency becomes a critical aspect of deck optimization. Analyzing the interplay
+                    between lands and the distribution of mana costs within a curve offers insights into creating
+                    balanced and reliable mana bases.</li>
+                <li><strong>Individual Card Impact:</strong> Categorizing decks based on mana curves allows for a more
+                    granular analysis of individual card impact within specific archetypes. Understanding how each card
+                    contributes to the overall curve dynamics helps refine deck-building choices and emphasizes the
+                    importance of card selection in achieving desired outcomes.</li>
+                <li><strong>Curve-Specific Archetypes:</strong> Further defining specific archetypes based on their mana
+                    curves enables a nuanced exploration of deck types. For instance, identifying archetypes with
+                    aggressive early-game curves, control-oriented mid-game curves, or ramp-focused late-game curves
+                    allows players to tailor their strategies to match the strengths and weaknesses of these
+                    archetypes.</li>
+            </ul>
+            <p>In essence, the categorization of decks by mana curve introduces a multi-faceted approach to Magic: The
+                Gathering exploration. It goes beyond surface-level analysis, providing a foundation for optimizing land
+                counts, refining mana bases, and delving into the intricate details of individual card impact within
+                specific archetypes. As players leverage these insights, the game evolves, offering new dimensions for
+                strategic depth and innovation.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Jack Wright. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
